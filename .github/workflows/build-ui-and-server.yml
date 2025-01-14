@@ -23,6 +23,10 @@ jobs:
     name: UI build
     runs-on: ubuntu-22.04
     steps:
+      - name: Check disk space before build
+        run: |
+          df -h
+          du -sh /*
       - name: Check out code
         uses: actions/checkout@v4
         with:
@@ -35,6 +39,11 @@ jobs:
       - name: Build meshery-ui and provider-ui
         run: |
           make ui-build
+      - name: Check disk space after build (even if build fails)
+        if: always()
+        run: |
+          df -h
+          du -sh /*
       - name: Upload meshery-ui artifacts
         uses: actions/upload-artifact@v4
         with:
