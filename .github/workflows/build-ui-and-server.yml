@@ -23,10 +23,6 @@ jobs:
     name: UI build
     runs-on: ubuntu-22.04
     steps:
-      - name: Check disk space before build
-        run: |
-          df -h
-          du -sh /*
       - name: Check out code
         uses: actions/checkout@v4
         with:
@@ -39,11 +35,6 @@ jobs:
       - name: Build meshery-ui and provider-ui
         run: |
           make ui-build
-      - name: Check disk space after build (even if build fails)
-        if: always()
-        run: |
-          df -h
-          du -sh /*
       - name: Upload meshery-ui artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -155,6 +146,10 @@ jobs:
     name: Docker build
     runs-on: ubuntu-22.04
     steps:
+      - name: Check disk space before build
+        run: |
+          df -h
+          du -sh /*
       - name: Check out code
         uses: actions/checkout@v4
         with:
@@ -166,6 +161,11 @@ jobs:
         run: |
           DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache -t meshery:edge-latest --build-arg TOKEN=test --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
           docker tag meshery:edge-latest meshery:edge-${GITHUB_SHA::8}
+      - name: Check disk space after build (even if build fails)
+        if: always()
+        run: |
+          df -h
+          du -sh /*
       - name: Docker edge push
         if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
         run: |
