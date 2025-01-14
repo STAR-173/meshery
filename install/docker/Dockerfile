@@ -32,7 +32,6 @@ COPY --from=meshery-ui-deps /app/node_modules ./node_modules
 COPY ui .
 # Disable NextJS Telemetry data collect
 ENV NEXT_TELEMETRY_DISABLED 1
-RUN npm install -g eslint
 RUN npm run build && npm run export
 
 FROM base-node AS meshery-ui-provider-builder
