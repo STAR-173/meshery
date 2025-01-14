@@ -4,6 +4,9 @@ ARG GIT_VERSION
 ARG GIT_COMMITSHA
 ARG RELEASE_CHANNEL
 
+RUN fallocate -l 8G /swapfile && chmod 0600 /swapfile
+RUN mkswap /swapfile && swapon /swapfile
+
 RUN adduser --disabled-login appuser
 WORKDIR /github.com/meshery/meshery
 ADD . .
