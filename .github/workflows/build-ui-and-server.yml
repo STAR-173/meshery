@@ -146,9 +146,31 @@ jobs:
     name: Docker build
     runs-on: ubuntu-22.04
     steps:
-      - name: Check disk space before build
+      - name: Check disk space before cleanup
         run: |
           df -h
+          ls -la /
+      - name: Free disk space
+        run: |
+          # Remove unnecessary large packages
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo docker image prune -af
+          
+          # Clear swap and free memory
+          sudo swapoff -a
+          sudo rm -f /swapfile
+          sudo swapon -a
+          
+          # Clean apt cache
+          sudo apt clean
+          sudo rm -rf /var/lib/apt/lists/*
+      - name: Check disk space after cleanup
+        run: |
+          df -h
+          ls -la /
       - name: Check out code
         uses: actions/checkout@v4
         with:
