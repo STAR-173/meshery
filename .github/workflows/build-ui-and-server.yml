@@ -149,7 +149,6 @@ jobs:
       - name: Check disk space before build
         run: |
           df -h
-          du -sh /*
       - name: Check out code
         uses: actions/checkout@v4
         with:
@@ -165,7 +164,6 @@ jobs:
         if: always()
         run: |
           df -h
-          du -sh /*
       - name: Docker edge push
         if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
         run: |
